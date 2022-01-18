@@ -23,6 +23,18 @@ class NotesDatabase {
   }
 
   // Update
+  static Future<void> updateNote(Note note) async {
+    await _db
+        .collection('Notes')
+        .doc(note.id)
+        .update(
+          note.toJSON(),
+        )
+        .then((value) => print("Added item"))
+        .catchError(
+          (error) => print("Failed to add item: $error"),
+        );
+  }
 
   // Read one
   static Future<DocumentSnapshot<Object?>> readNote(String noteID) {
@@ -35,4 +47,16 @@ class NotesDatabase {
   }
 
   // Delete
+  static Future<void> deleteNote(String id) async {
+    await _db
+        .collection('Notes')
+        .doc(
+          id,
+        )
+        .delete()
+        .then((value) => print("Added item"))
+        .catchError(
+          (error) => print("Failed to add item: $error"),
+        );
+  }
 }

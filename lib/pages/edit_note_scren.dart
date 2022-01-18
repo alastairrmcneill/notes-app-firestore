@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:notes_app_firebase/models/note_model.dart';
 import 'package:notes_app_firebase/services/database_service.dart';
 
 class EditNoteScreen extends StatefulWidget {
@@ -23,13 +24,13 @@ class _TestNoteState extends State<EditNoteScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.of(context).pop();
+              updateNote();
             },
             icon: const Icon(Icons.check),
           ),
           IconButton(
             onPressed: () {
-              Navigator.of(context).pop();
+              deleteNote();
             },
             icon: const Icon(
               Icons.delete,
@@ -103,5 +104,22 @@ class _TestNoteState extends State<EditNoteScreen> {
         return Text("loading");
       },
     );
+  }
+
+  Future updateNote() async {
+    final Note note = Note(
+      id: widget.noteID,
+      title: _titleController.text,
+      body: _descriptionController.text,
+      createdTime: Timestamp.fromDate(DateTime.now()),
+    );
+
+    NotesDatabase.updateNote(note);
+    Navigator.of(context).pop();
+  }
+
+  Future deleteNote() async {
+    NotesDatabase.deleteNote(widget.noteID);
+    Navigator.of(context).pop();
   }
 }
