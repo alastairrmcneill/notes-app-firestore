@@ -83,17 +83,32 @@ class _TestNoteState extends State<EditNoteScreen> {
     );
   }
 
+  Widget _buildIssueScreen(String message) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: Center(
+        child: Text(
+          message,
+          style: TextStyle(
+            fontWeight: FontWeight.w300,
+            fontSize: 28,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<DocumentSnapshot>(
       future: NotesDatabase.readNote(widget.noteID),
       builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         if (snapshot.hasError) {
-          return Text("Something went wrong");
+          return _buildIssueScreen("Something went wrong");
         }
 
         if (snapshot.hasData && !snapshot.data!.exists) {
-          return Text("Document does not exist");
+          return _buildIssueScreen("Document does not exist");
         }
 
         if (snapshot.connectionState == ConnectionState.done) {
@@ -101,7 +116,7 @@ class _TestNoteState extends State<EditNoteScreen> {
           return _buildPage(data);
         }
 
-        return Text("loading");
+        return _buildIssueScreen("loading");
       },
     );
   }
