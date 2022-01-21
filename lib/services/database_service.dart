@@ -43,7 +43,13 @@ class NotesDatabase {
 
   // Read all
   static Stream<QuerySnapshot<Map<String, dynamic>>> readAllNotes() {
-    return FirebaseFirestore.instance.collection('Notes').snapshots();
+    return FirebaseFirestore.instance
+        .collection('Notes')
+        .orderBy(
+          'createdTime',
+          descending: true,
+        )
+        .snapshots();
   }
 
   // Delete
