@@ -10,7 +10,25 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+  FocusNode _emailFocus = FocusNode();
+  bool _emailAutoValidate = false;
   String errorText = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _emailFocus.addListener(() {
+      if (_emailFocus.hasFocus) {
+        setState(() {
+          _emailAutoValidate = false;
+        });
+      } else {
+        setState(() {
+          _emailAutoValidate = true;
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +57,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   color: Colors.black,
                   fontSize: 16,
                 ),
+                focusNode: _emailFocus,
                 textInputAction: TextInputAction.next,
+                autovalidateMode: AutovalidateMode.always,
+                validator: (value) {
+                  if (_emailAutoValidate) {
+                    if (value == null || value.isEmpty || value.length < 5 || !value.contains('@') || !(value.contains('.com') || value.contains('.co.uk'))) {
+                      return 'Invalid email address';
+                    }
+                  }
+                  return null;
+                },
                 maxLines: 1,
                 controller: _emailController,
                 decoration: InputDecoration(
