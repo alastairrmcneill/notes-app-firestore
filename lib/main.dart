@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:notes_app_firebase/pages/home_screen.dart';
+import 'package:notes_app_firebase/pages/login_screen.dart';
 import 'package:notes_app_firebase/services/database_service.dart';
 import 'package:flutter/services.dart';
 
@@ -48,7 +49,7 @@ class MyApp extends StatelessWidget {
           systemOverlayStyle: SystemUiOverlayStyle.light,
         ),
       ),
-      home: HomeScreen(),
+      home: LoginScreen(),
     );
   }
 }
