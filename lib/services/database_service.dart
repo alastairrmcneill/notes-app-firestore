@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:notes_app_firebase/models/note_model.dart';
+import 'package:notes_app_firebase/services/auth_service.dart';
 
 class NotesDatabase {
   static final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -8,7 +10,7 @@ class NotesDatabase {
   // Create
 
   static Future<void> addNote(Note note) async {
-    DocumentReference ref = _db.collection('Notes').doc();
+    DocumentReference ref = _db.collection('Users').doc(FirebaseAuth.instance.currentUser!.uid).collection('Notes').doc();
 
     Note newNote = note.copy(id: ref.id);
 
@@ -25,6 +27,8 @@ class NotesDatabase {
   // Update
   static Future<void> updateNote(Note note) async {
     await _db
+        .collection('Users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
         .collection('Notes')
         .doc(note.id)
         .update(
@@ -43,7 +47,9 @@ class NotesDatabase {
 
   // Read all
   static Stream<QuerySnapshot<Map<String, dynamic>>> readAllNotes() {
-    return FirebaseFirestore.instance
+    return _db
+        .collection('Users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
         .collection('Notes')
         .orderBy(
           'createdTime',
