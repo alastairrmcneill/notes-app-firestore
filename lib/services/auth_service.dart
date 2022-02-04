@@ -26,5 +26,11 @@ class AuthService {
   }
 
   // Sign out
-
+  static signOut() async {
+    try {
+      await _auth.signOut();
+    } on FirebaseAuthException catch (error) {
+      return error;
+    }
+  }
 }

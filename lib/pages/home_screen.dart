@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:notes_app_firebase/models/note_model.dart';
 import 'package:notes_app_firebase/pages/create_note_screen.dart';
 import 'package:notes_app_firebase/pages/edit_note_scren.dart';
+import 'package:notes_app_firebase/pages/login_screen.dart';
+import 'package:notes_app_firebase/services/auth_service.dart';
 import 'package:notes_app_firebase/services/database_service.dart';
 import 'package:notes_app_firebase/widgets/note_tile.dart';
 
@@ -31,6 +33,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         centerTitle: false,
+        actions: [
+          IconButton(
+              onPressed: () async {
+                AuthService.signOut();
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoginScreen()));
+              },
+              icon: Icon(Icons.logout))
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),

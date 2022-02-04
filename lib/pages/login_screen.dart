@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:notes_app_firebase/pages/home_screen.dart';
 import 'package:notes_app_firebase/services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -45,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
         });
       }
       if (result is UserCredential) {
-        print(result.user!.uid);
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomeScreen()));
       }
     }
   }
