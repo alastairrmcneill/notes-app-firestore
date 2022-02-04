@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:notes_app_firebase/services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -13,6 +15,40 @@ class _LoginScreenState extends State<LoginScreen> {
   FocusNode _emailFocus = FocusNode();
   bool _emailAutoValidate = false;
   String errorText = '';
+
+  final _emailFormKey = GlobalKey<FormFieldState>();
+  final _passwordFormKey = GlobalKey<FormFieldState>();
+
+  void signIn({bool newUser = false}) async {
+    // Set error message back to blank
+    setState(() {
+      errorText = '';
+      _emailAutoValidate = true;
+    });
+
+    // Validate email field and password then try loggin in
+    if (_emailFormKey.currentState!.validate() && _passwordFormKey.currentState!.validate()) {
+      dynamic result = newUser
+          ? await AuthService.registerWithEmailPassword(
+              _emailController.text.trim(),
+              _passwordController.text.trim(),
+            )
+          : await AuthService.signInWithEmailPassword(
+              _emailController.text.trim(),
+              _passwordController.text.trim(),
+            );
+
+      // Display any errors
+      if (result is FirebaseAuthException) {
+        setState(() {
+          errorText = result.message!;
+        });
+      }
+      if (result is UserCredential) {
+        print(result.user!.uid);
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -58,6 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   fontSize: 16,
                 ),
                 focusNode: _emailFocus,
+                key: _emailFormKey,
                 textInputAction: TextInputAction.next,
                 autovalidateMode: AutovalidateMode.always,
                 validator: (value) {
@@ -80,13 +117,21 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 10),
-              TextField(
+              TextFormField(
                 style: const TextStyle(
                   color: Colors.black,
                   fontSize: 16,
                 ),
+                key: _passwordFormKey,
                 textInputAction: TextInputAction.done,
-                onSubmitted: (value) {
+                validator: (value) {
+                  if (value == null || value.length < 6) {
+                    return 'Password must be at least 6 characters';
+                  }
+
+                  return null;
+                },
+                onFieldSubmitted: (value) {
                   print(value);
                 },
                 obscureText: true,
@@ -105,21 +150,31 @@ class _LoginScreenState extends State<LoginScreen> {
               errorText != ''
                   ? Text(
                       errorText,
-                      style: const TextStyle(
-                        color: Colors.red,
-                        fontSize: 14,
+                      style: TextStyle(
+                        color: Colors.red[700],
+                        fontSize: 12,
                       ),
                     )
                   : const SizedBox(height: 1),
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.8,
-                child: ElevatedButton(onPressed: () {}, child: Text('Log in')),
+                child: ElevatedButton(
+                    onPressed: () async {
+                      signIn(newUser: false);
+                    },
+                    child: Text('Log in')),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Don\'t have an account?'),
-                  TextButton(onPressed: () {}, child: const Text('Sign up')),
+                  const Text(
+                    'Don\'t have an account?',
+                  ),
+                  TextButton(
+                      onPressed: () async {
+                        signIn(newUser: true);
+                      },
+                      child: const Text('Sign up')),
                 ],
               ),
             ],
